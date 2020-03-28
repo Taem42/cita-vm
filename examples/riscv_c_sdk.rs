@@ -13,7 +13,7 @@ fn main() {
     let buffer = Bytes::from(fs::read("./build/riscv_c_sdk").unwrap());
 
     // Initialize ret data
-    let ret_data = Rc::new(RefCell::new(Vec::new()));
+    // let ret_data = Rc::new(RefCell::new(Vec::new()));
 
     // Initialize params
     let mut vm_params = cita_vm::InterpreterParams::default();
@@ -45,25 +45,26 @@ fn main() {
     let mut machine =
         ckb_vm::DefaultMachineBuilder::<ckb_vm::DefaultCoreMachine<u64, ckb_vm::SparseMemory<u64>>>::default()
             .instruction_cycle_func(Box::new(cita_vm::riscv::instruction_cycles))
-            .syscall(Box::new(cita_vm::riscv::SyscallDebug::new("riscv:", std::io::stdout())))
-            .syscall(Box::new(cita_vm::riscv::SyscallEnvironment::new(
-                vm_context.clone(),
-                vm_params.clone(),
-                state.clone(),
-            )))
-            .syscall(Box::new(cita_vm::riscv::SyscallRet::new(ret_data.clone())))
-            .syscall(Box::new(cita_vm::riscv::SyscallStorage::new(
-                vm_params.address,
-                state.clone(),
-            )))
+            // .syscall(Box::new(cita_vm::riscv::SyscallDebug::new("riscv:", std::io::stdout())))
+            // .syscall(Box::new(cita_vm::riscv::SyscallEnvironment::new(
+            //     vm_context.clone(),
+            //     vm_params.clone(),
+            //     state.clone(),
+            // )))
+            // .syscall(Box::new(cita_vm::riscv::SyscallRet::new(ret_data.clone())))
+            // .syscall(Box::new(cita_vm::riscv::SyscallStorage::new(
+            //     vm_params.address,
+            //     state.clone(),
+            // )))
+            .syscall(Box::new(cita_vm::riscv::Zk42::new()))
             .build();
 
     machine.load_program(&buffer, &["riscv_c_main".into()]).unwrap();
     let result = machine.run().unwrap();
     println!(
-        "exit={:#02x} ret={:?} cycles={:?}",
+        "exit={:#02x} cycles={:?}",
         result,
-        ret_data.borrow(),
+        // ret_data.borrow(),
         machine.cycles()
     );
 }

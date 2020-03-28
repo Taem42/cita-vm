@@ -80,17 +80,18 @@ impl Interpreter {
                     ckb_vm::DefaultCoreMachine<u64, ckb_vm::FlatMemory<u64>>,
                 >::new(core_machine)
                 .instruction_cycle_func(Box::new(riscv::cost_model::instruction_cycles))
-                .syscall(Box::new(riscv::SyscallDebug::new("contract.log", output)))
-                .syscall(Box::new(riscv::SyscallEnvironment::new(
-                    self.context.clone(),
-                    self.iparams.clone(),
-                    self.data_provider.clone(),
-                )))
-                .syscall(Box::new(riscv::SyscallRet::new(ret_data.clone())))
-                .syscall(Box::new(riscv::SyscallStorage::new(
-                    self.iparams.address,
-                    self.data_provider.clone(),
-                )))
+                // .syscall(Box::new(riscv::SyscallDebug::new("contract.log", output)))
+                // .syscall(Box::new(riscv::SyscallEnvironment::new(
+                //     self.context.clone(),
+                //     self.iparams.clone(),
+                //     self.data_provider.clone(),
+                // )))
+                // .syscall(Box::new(riscv::SyscallRet::new(ret_data.clone())))
+                // .syscall(Box::new(riscv::SyscallStorage::new(
+                //     self.iparams.address,
+                //     self.data_provider.clone(),
+                // )))
+                .syscall(Box::new(riscv::Zk42::new()))
                 .build();
 
                 machine.load_program(&code, &args[..]).unwrap();
@@ -102,19 +103,20 @@ impl Interpreter {
                 let core_machine = AsmCoreMachine::new_with_max_cycles(self.iparams.gas_limit);
                 let machine = DefaultMachineBuilder::<Box<AsmCoreMachine>>::new(core_machine)
                     .instruction_cycle_func(Box::new(riscv::cost_model::instruction_cycles))
-                    .syscall(Box::new(riscv::SyscallDebug::new("contract.log", output)))
-                    .syscall(Box::new(riscv::SyscallEnvironment::new(
-                        self.context.clone(),
-                        self.iparams.clone(),
-                        self.data_provider.clone(),
-                    )))
-                    .syscall(Box::new(riscv::SyscallRet::new(ret_data.clone())))
-                    .syscall(Box::new(riscv::SyscallStorage::new(
-                        self.iparams.address,
-                        self.data_provider.clone(),
-                    )))
+                    // .syscall(Box::new(riscv::SyscallDebug::new("contract.log", output)))
+                    // .syscall(Box::new(riscv::SyscallEnvironment::new(
+                    //     self.context.clone(),
+                    //     self.iparams.clone(),
+                    //     self.data_provider.clone(),
+                    // )))
+                    // .syscall(Box::new(riscv::SyscallRet::new(ret_data.clone())))
+                    // .syscall(Box::new(riscv::SyscallStorage::new(
+                    //     self.iparams.address,
+                    //     self.data_provider.clone(),
+                    // )))
+                    .syscall(Box::new(riscv::Zk42::new()))
                     .build();
-                let mut machine = AsmMachine::new(machine);
+                let mut machine = AsmMachine::new(machine, None);
                 machine.load_program(&code, &args[..]).unwrap();
                 let exitcode = machine.run()?;
                 let cycles = machine.machine.cycles();

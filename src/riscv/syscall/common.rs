@@ -2,11 +2,11 @@ use ckb_vm::instructions::Register;
 use ckb_vm::Memory;
 
 // Get a string from memory, stop with '\0' flag.
-pub fn get_str<Mac: ckb_vm::SupportMachine>(machine: &mut Mac, addr: usize) -> Result<String, ckb_vm::Error> {
+pub fn get_str<Mac: ckb_vm::SupportMachine>(machine: &mut Mac, addr: u64) -> Result<String, ckb_vm::Error> {
     let mut addr = addr;
     let mut buffer = Vec::new();
     loop {
-        let byte = machine.memory_mut().load8(&Mac::REG::from_usize(addr))?.to_u8();
+        let byte = machine.memory_mut().load8(&Mac::REG::from_u64(addr))?.to_u8();
         if byte == 0 {
             break;
         }
@@ -20,13 +20,13 @@ pub fn get_str<Mac: ckb_vm::SupportMachine>(machine: &mut Mac, addr: usize) -> R
 // Get a byte array from memory by exact size
 pub fn get_arr<Mac: ckb_vm::SupportMachine>(
     machine: &mut Mac,
-    addr: usize,
-    size: usize,
+    addr: u64,
+    size: u64,
 ) -> Result<Vec<u8>, ckb_vm::Error> {
     let mut addr = addr;
     let mut buffer = Vec::new();
     for _ in 0..size {
-        let byte = machine.memory_mut().load8(&Mac::REG::from_usize(addr))?.to_u8();
+        let byte = machine.memory_mut().load8(&Mac::REG::from_u64(addr))?.to_u8();
         buffer.push(byte);
         addr += 1;
     }

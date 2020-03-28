@@ -216,4 +216,9 @@ int pvm_gaslimit(uint64_t *gaslimit)
     return syscall(SYSCODE_GASLIMIT, gaslimit, 0, 0, 0, 0, 0);
 }
 
+int pvm_zk42(uint8_t *input_amount_hash, uint8_t *output_amount_hash, uint8_t *proof, uint64_t proof_size)
+{
+    return syscall(42, input_amount_hash, output_amount_hash, proof, proof_size, 0, 0);
+}
+
 #endif
